@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pest Detection AI</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="leaf-icon">
+                    <path d="M2 22c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8.9 4 4 0 0 0 4.6 0 5.56 5.56 0 0 1 3.8-.9c1.63.225 2.65 1.213 3.9 2.2"/>
+                    <path d="M2 16c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8.9 4 4 0 0 0 4.6 0 5.56 5.56 0 0 1 3.8-.9c1.63.225 2.65 1.213 3.9 2.2"/>
+                </svg>
+                <h1>Pest Detection AI</h1>
+            </div>
+            <p class="subtitle">Protect your crops with advanced AI-powered pest detection. Upload an image of your plant to identify potential pest problems.</p>
+        </header>
+
+        <main class="main-content">
+            <div class="upload-card">
+                <form action="/" method="POST" enctype="multipart/form-data" class="upload-form">
+                    <div class="upload-area" id="dropZone">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-icon">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        <input type="file" id="fileInput" name="file" accept="image/*" class="file-input" required>
+                        <label for="fileInput" class="upload-label">
+                            <span>Click to upload or drag and drop</span>
+                            <p class="upload-hint">Supported formats: JPG, PNG</p>
+                        </label>
+                    </div>
+                    <button type="submit" class="analyze-btn">
+                        Upload & Predict
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </button>
+                </form>
+
+                {% if uploaded_image %}
+                <div class="result-section">
+                    <h3>Analysis Results</h3>
+                    <div class="result-container">
+                        <div class="image-result">
+                            <img src="{{ uploaded_image }}" alt="Analyzed Image" class="result-image">
+                        </div>
+                        <div class="result-details">
+                            <div class="prediction-card">
+                                <h4>Prediction</h4>
+                                <p class="prediction-result">{{ result }}</p>
+                                <!-- <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: {{confidence|round(2)}}%"></div>
+                                </div> -->
+                                <p class="confidence-text">Confidence: {{ confidence|round(2) }}%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if pest_info %}
+                <div class="pest-info-section">
+                    <h3>Pest Information</h3>
+                    <div class="pest-info-card">
+                        <div class="pest-info-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="16" x2="12" y2="12"/>
+                                <line x1="12" y1="8" x2="12.01" y2="8"/>
+                            </svg>
+                            <h4>About {{ result }}</h4>
+                        </div>
+                        <div class="pest-info-content">
+                            {{ pest_info|safe }}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if error %}
+                <div class="error-message">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <p>{{ error }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="info-cards">
+                <div class="info-card">
+                    <div class="icon-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 22c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8.9 4 4 0 0 0 4.6 0 5.56 5.56 0 0 1 3.8-.9c1.63.225 2.65 1.213 3.9 2.2"/>
+                            <path d="M2 16c1.25-.987 2.27-1.975 3.9-2.2a5.56 5.56 0 0 1 3.8.9 4 4 0 0 0 4.6 0 5.56 5.56 0 0 1 3.8-.9c1.63.225 2.65 1.213 3.9 2.2"/>
+                        </svg>
+                    </div>
+                    <div class="info-content">
+                        <h3>Smart Detection</h3>
+                        <p>Our AI model can identify various crop pests with high accuracy</p>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="icon-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                    </div>
+                    <div class="info-content">
+                        <h3>Instant Results</h3>
+                        <p>Get immediate pest identification and treatment recommendations</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+
+        // Drag and drop functionality
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                fileInput.files = e.dataTransfer.files;
+            }
+        });
+    </script>
+</body>
+</html>
